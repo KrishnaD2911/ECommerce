@@ -81,7 +81,17 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     return next(new ErrorHandler(errors.array().map((e) => e.msg).join('. '), 400));
   }
 
-  const product = await Product.create(withUploadedImage(req.body, req.file));
+  const productData = { ...req.body };
+  if (productData.stock !== undefined) {
+    if (Number(productData.stock) <= 0) {
+      productData.stock = 0;
+      productData.status = 'out_of_stock';
+    } else if (productData.status === 'out_of_stock') {
+      productData.status = 'active';
+    }
+  }
+
+  const product = await Product.create(withUploadedImage(productData, req.file));
 
   getIO().emit('products_updated');
 
@@ -109,7 +119,17 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     return next(new ErrorHandler('Product not found', 404));
   }
 
-  product = await Product.findByIdAndUpdate(req.params.id, withUploadedImage(req.body, req.file), {
+  const productData = { ...req.body };
+  if (productData.stock !== undefined) {
+    if (Number(productData.stock) <= 0) {
+      productData.stock = 0;
+      productData.status = 'out_of_stock';
+    } else if (product.status === 'out_of_stock' && productData.status === undefined) {
+      productData.status = 'active';
+    }
+  }
+
+  product = await Product.findByIdAndUpdate(req.params.id, withUploadedImage(productData, req.file), {
     new: true,
     runValidators: true,
   });
@@ -261,6 +281,59 @@ export const bulkStatusUpdate = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: `${result.modifiedCount} product(s) status updated successfully`,
+    modifiedCount: result.modifiedCount,
+  });
+});
+
+/**
+ * @desc    Bulk update products stock
+ * @route   POST /api/v1/products/bulk-stock-update
+ * @access  Private/Admin
+ */
+export const bulkStockUpdate = asyncHandler(async (req, res, next) => {
+  const { ids, stock } = req.body;
+
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return next(new ErrorHandler('Please provide an array of product IDs', 400));
+  }
+
+  const stockValue = Number(stock);
+  if (isNaN(stockValue) || stockValue < 0) {
+    return next(new ErrorHandler('Please provide a valid stock quantity (>= 0)', 400));
+  }
+
+  let updatePipeline;
+  if (stockValue === 0) {
+    updatePipeline = [{ $set: { stock: 0, status: 'out_of_stock' } }];
+  } else {
+    updatePipeline = [
+      {
+        $set: {
+          stock: stockValue,
+          status: {
+            $cond: {
+              if: { $eq: ['$status', 'out_of_stock'] },
+              then: 'active',
+              else: '$status'
+            }
+          }
+        }
+      }
+    ];
+  }
+
+  const result = await Product.updateMany(
+    { _id: { $in: ids } },
+    updatePipeline
+  );
+
+  if (result.modifiedCount > 0) {
+    getIO().emit('products_updated');
+  }
+
+  res.status(200).json({
+    success: true,
+    message: `${result.modifiedCount} product(s) stock updated successfully`,
     modifiedCount: result.modifiedCount,
   });
 });

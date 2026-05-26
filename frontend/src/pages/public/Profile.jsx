@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchMyOrders } from '../../redux/orderSlice';
-import { HiOutlineUser, HiOutlineShoppingBag, HiOutlineCalendar, HiOutlineMail } from 'react-icons/hi';
+import { fetchMyOrders, updateOrderStatus } from '../../redux/orderSlice';
+import { HiOutlineUser, HiOutlineShoppingBag, HiOutlineCalendar, HiOutlineMail, HiOutlineRefresh, HiOutlineReply } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,7 @@ const Profile = () => {
     dispatch(fetchMyOrders());
   }, [dispatch]);
 
-  const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val);
   const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   return (
@@ -82,7 +83,11 @@ const Profile = () => {
             </div>
           ) : (
             <div className="space-y-6">
-              {orders.map((order) => (
+              {orders.map((order) => {
+                const orderDate = new Date(order.createdAt);
+                const isEligibleForReturn = (new Date() - orderDate) <= 7 * 24 * 60 * 60 * 1000;
+                
+                return (
                 <div key={order._id} className="bg-[#0a0a0a] rounded-[24px] border border-white/5 shadow-sm overflow-hidden">
                   {/* Order Header */}
                   <div className="bg-black border-b border-white/5 px-6 py-4 flex flex-wrap justify-between items-center gap-4 text-sm">
@@ -127,8 +132,46 @@ const Profile = () => {
                       ))}
                     </div>
                   </div>
+
+                  {/* Order Actions */}
+                  {isEligibleForReturn && order.status === 'completed' && (
+                    <div className="bg-black/30 border-t border-white/5 px-6 py-4 flex flex-wrap justify-end gap-3">
+                      <button 
+                        onClick={() => {
+                          dispatch(updateOrderStatus({ id: order._id, status: 'return_requested' }))
+                            .unwrap()
+                            .then(() => toast.success('Return request initiated. We will email you the instructions.'))
+                            .catch((err) => toast.error(err || 'Failed to request return'));
+                        }}
+                        className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#0a0a0a] px-5 py-2.5 text-sm font-bold text-white transition-colors hover:border-orange-500/50 hover:text-orange-500"
+                      >
+                        <HiOutlineReply className="text-lg" /> Return Items
+                      </button>
+                      <button 
+                        onClick={() => {
+                          dispatch(updateOrderStatus({ id: order._id, status: 'exchange_requested' }))
+                            .unwrap()
+                            .then(() => toast.success('Exchange request initiated. Please check your email.'))
+                            .catch((err) => toast.error(err || 'Failed to request exchange'));
+                        }}
+                        className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#0a0a0a] px-5 py-2.5 text-sm font-bold text-white transition-colors hover:border-orange-500/50 hover:text-orange-500"
+                      >
+                        <HiOutlineRefresh className="text-lg" /> Exchange
+                      </button>
+                    </div>
+                  )}
+                  {order.status === 'return_requested' && (
+                    <div className="bg-orange-500/10 border-t border-white/5 px-6 py-4 text-orange-500 text-sm font-bold flex justify-end">
+                      Return Request Pending
+                    </div>
+                  )}
+                  {order.status === 'exchange_requested' && (
+                    <div className="bg-orange-500/10 border-t border-white/5 px-6 py-4 text-orange-500 text-sm font-bold flex justify-end">
+                      Exchange Request Pending
+                    </div>
+                  )}
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>

@@ -8,6 +8,7 @@ import {
   bulkRemoveProducts,
   bulkPriceUpdate,
   bulkStatusUpdate,
+  bulkStockUpdate,
   setPage,
 } from '../../redux/productSlice';
 import SearchBar from '../../components/SearchBar';
@@ -71,6 +72,13 @@ const ProductList = () => {
     });
   };
 
+  const handleBulkStockUpdate = (stock) => {
+    dispatch(bulkStockUpdate({ ids: selectedIds, stock })).then(() => {
+      dispatch(fetchProducts());
+      setSelectedIds([]);
+    });
+  };
+
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pages) {
       dispatch(setPage(newPage));
@@ -124,6 +132,7 @@ const ProductList = () => {
           onDelete={handleBulkDelete}
           onPriceUpdate={handleBulkPriceUpdate}
           onStatusUpdate={handleBulkStatusUpdate}
+          onStockUpdate={handleBulkStockUpdate}
           onClearSelection={() => setSelectedIds([])}
         />
 

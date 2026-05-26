@@ -9,6 +9,7 @@ import {
   bulkDeleteProducts,
   bulkPriceUpdate,
   bulkStatusUpdate,
+  bulkStockUpdate,
   getProductStats,
 } from '../controllers/product.controller.js';
 import { protect, authorize } from '../middleware/auth.middleware.js';
@@ -48,6 +49,13 @@ router.post(
   protect,
   authorize('admin'),
   bulkStatusUpdate
+);
+
+router.post(
+  '/bulk-stock-update',
+  protect,
+  authorize('admin'),
+  bulkStockUpdate
 );
 
 // Public Routes

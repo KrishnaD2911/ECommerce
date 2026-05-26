@@ -34,7 +34,7 @@ const Cart = () => {
     );
   }
 
-  const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">

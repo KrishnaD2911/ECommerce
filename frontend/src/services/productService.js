@@ -133,6 +133,14 @@ const bulkStatusUpdate = async (ids, status) => {
   return response.data;
 };
 
+/**
+ * Bulk stock update
+ */
+const bulkStockUpdate = async (ids, stock) => {
+  const response = await api.post('/bulk-stock-update', { ids, stock });
+  return response.data;
+};
+
 const productService = {
   getProducts,
   getProduct,
@@ -144,6 +152,7 @@ const productService = {
   bulkDeleteProducts,
   bulkPriceUpdate,
   bulkStatusUpdate,
+  bulkStockUpdate,
 };
 
 export default productService;

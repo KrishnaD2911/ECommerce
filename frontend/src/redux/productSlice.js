@@ -174,6 +174,20 @@ export const bulkStatusUpdate = createAsyncThunk(
   }
 );
 
+export const bulkStockUpdate = createAsyncThunk(
+  'products/bulkStockUpdate',
+  async ({ ids, stock }, { rejectWithValue }) => {
+    try {
+      await productService.bulkStockUpdate(ids, stock);
+      toast.success(`Stock updated for ${ids.length} products`);
+      return { ids, stock };
+    } catch (error) {
+      toast.error(error.message || 'Failed to update stock');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 // Slice
 const productSlice = createSlice({
   name: 'products',
@@ -294,6 +308,11 @@ const productSlice = createSlice({
       
       // bulkStatusUpdate
       .addCase(bulkStatusUpdate.fulfilled, (state, action) => {
+         // We'll let the component refetch
+      })
+      
+      // bulkStockUpdate
+      .addCase(bulkStockUpdate.fulfilled, (state, action) => {
          // We'll let the component refetch
       });
   }

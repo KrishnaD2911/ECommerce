@@ -34,10 +34,10 @@ const ProductTable = ({
   };
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD',
-    }).format(price);
+      currency: 'INR',
+    }).format(price || 0);
   };
 
   const formatDate = (dateString) => {
@@ -107,7 +107,12 @@ const ProductTable = ({
                     {product.stock}
                   </span>
                 </td>
-                <td className="px-5 py-4">{getStatusBadge(product.status)}</td>
+                <td className="px-5 py-4">
+                  {getStatusBadge(
+                    product.stock === 0 ? 'out_of_stock' : 
+                    (product.stock > 0 && product.status === 'out_of_stock' ? 'active' : product.status)
+                  )}
+                </td>
                 <td className="px-5 py-4 text-sm font-medium text-zinc-500">{formatDate(product.createdAt)}</td>
                 <td className="px-5 py-4">
                   <div className="flex justify-end gap-2">

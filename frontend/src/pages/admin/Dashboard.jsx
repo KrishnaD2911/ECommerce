@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductStats, fetchProducts } from '../../redux/productSlice';
+import { fetchAllOrders, updateOrderStatus } from '../../redux/orderSlice';
 import { Link } from 'react-router-dom';
 import {
   HiOutlineCube,
@@ -19,10 +20,12 @@ import toast from 'react-hot-toast';
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { stats, loading, error } = useSelector((state) => state.products);
+  const { orders } = useSelector((state) => state.orders);
   const [recentProducts, setRecentProducts] = useState([]);
 
   useEffect(() => {
     dispatch(fetchProductStats());
+    dispatch(fetchAllOrders());
 
     dispatch(fetchProducts())
       .unwrap()
@@ -51,9 +54,19 @@ const Dashboard = () => {
   };
 
   const categoryStats = stats?.categoryStats || [];
+  const pendingRequests = orders ? orders.filter(o => o.status === 'return_requested' || o.status === 'exchange_requested') : [];
 
-  const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val || 0);
-  const formatNumber = (val) => new Intl.NumberFormat('en-US').format(val || 0);
+  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val || 0);
+  const formatNumber = (val) => new Intl.NumberFormat('en-IN').format(val || 0);
+  const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+  const handleApproveRequest = (id, type) => {
+    const newStatus = type === 'return_requested' ? 'returned' : 'exchanged';
+    dispatch(updateOrderStatus({ id, status: newStatus }))
+      .unwrap()
+      .then(() => toast.success(`Request approved successfully`))
+      .catch((err) => toast.error(err || 'Failed to approve request'));
+  };
 
   return (
     <div className="min-h-screen bg-black pb-20">
@@ -167,6 +180,66 @@ const Dashboard = () => {
             </div>
           </section>
         </div>
+
+        {/* Pending Requests Section */}
+        <div className="mt-6">
+          <section className="bg-[#0a0a0a] rounded-[32px] border border-white/5 shadow-xl shadow-black/50 p-6 md:p-8">
+            <div className="mb-6 flex items-center justify-between border-b border-white/5 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/15 text-orange-500 text-xl">
+                  <HiOutlineExclamationCircle />
+                </div>
+                <h2 className="font-title text-2xl font-black text-white">Pending Requests</h2>
+              </div>
+              <span className="rounded-full bg-white/10 text-zinc-300 px-3 py-1 text-xs font-bold uppercase tracking-wide">
+                {pendingRequests.length} action{pendingRequests.length !== 1 ? 's' : ''} needed
+              </span>
+            </div>
+
+            {pendingRequests.length === 0 ? (
+              <div className="py-12 text-center text-zinc-500 font-medium flex flex-col items-center">
+                <HiOutlineCheckCircle className="text-5xl text-emerald-500/50 mb-3" />
+                All caught up! No pending returns or exchanges.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm text-zinc-400">
+                  <thead className="border-b border-white/5 text-xs uppercase text-zinc-500">
+                    <tr>
+                      <th className="px-4 py-3 font-bold">Order ID</th>
+                      <th className="px-4 py-3 font-bold">Customer</th>
+                      <th className="px-4 py-3 font-bold">Request Type</th>
+                      <th className="px-4 py-3 font-bold">Date</th>
+                      <th className="px-4 py-3 font-bold text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pendingRequests.map(req => (
+                      <tr key={req._id} className="border-b border-white/5 transition-colors hover:bg-white/5">
+                        <td className="px-4 py-4 font-mono font-bold text-white">#{req._id.substring(req._id.length - 8).toUpperCase()}</td>
+                        <td className="px-4 py-4 font-medium text-white">{req.user?.name || 'Unknown User'}</td>
+                        <td className="px-4 py-4">
+                          <span className="inline-flex items-center rounded-full bg-orange-500/15 px-2.5 py-0.5 text-xs font-bold uppercase text-orange-500">
+                            {req.status === 'return_requested' ? 'Return' : 'Exchange'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">{formatDate(req.createdAt)}</td>
+                        <td className="px-4 py-4 text-right">
+                          <button 
+                            onClick={() => handleApproveRequest(req._id, req.status)}
+                            className="btn bg-orange-500/10 text-orange-500 hover:bg-orange-500 hover:text-black border border-orange-500/20 px-4 py-1.5 text-xs"
+                          >
+                            Approve
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </div>
       </div>
     </div>
   );
@@ -186,7 +259,7 @@ const StatCard = ({ icon, title, value, accent, alert }) => (
       {icon}
     </div>
     <h3 className="text-sm font-bold text-zinc-500 mb-1">{title}</h3>
-    <div className="font-title text-3xl font-black text-white">{value}</div>
+    <div className="font-title text-3xl font-black text-white truncate" title={value}>{value}</div>
   </div>
 );
 
