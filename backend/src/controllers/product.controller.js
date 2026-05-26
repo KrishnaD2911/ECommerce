@@ -2,6 +2,7 @@ import { validationResult } from 'express-validator';
 import Product from '../models/product.model.js';
 import ApiFeatures from '../utils/apiFeatures.js';
 import { asyncHandler, ErrorHandler } from '../middleware/error.middleware.js';
+import { getIO } from '../socket.js';
 
 const withUploadedImage = (body, file) => {
   if (!file) return body;
@@ -82,6 +83,8 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
   const product = await Product.create(withUploadedImage(req.body, req.file));
 
+  getIO().emit('products_updated');
+
   res.status(201).json({
     success: true,
     product,
@@ -111,6 +114,8 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     runValidators: true,
   });
 
+  getIO().emit('products_updated');
+
   res.status(200).json({
     success: true,
     product,
@@ -132,6 +137,8 @@ export const deleteProduct = asyncHandler(async (req, res, next) => {
   product.isDeleted = true;
   await product.save();
 
+  getIO().emit('products_updated');
+
   res.status(200).json({
     success: true,
     message: 'Product soft deleted successfully',
@@ -152,6 +159,8 @@ export const restoreProduct = asyncHandler(async (req, res, next) => {
 
   product.isDeleted = false;
   await product.save();
+
+  getIO().emit('products_updated');
 
   res.status(200).json({
     success: true,
@@ -176,6 +185,10 @@ export const bulkDeleteProducts = asyncHandler(async (req, res, next) => {
     { _id: { $in: ids } },
     { $set: { isDeleted: true } }
   );
+
+  if (result.modifiedCount > 0) {
+    getIO().emit('products_updated');
+  }
 
   res.status(200).json({
     success: true,
@@ -208,6 +221,10 @@ export const bulkPriceUpdate = asyncHandler(async (req, res, next) => {
     [{ $set: { price: { $round: [{ $multiply: ['$price', multiplier] }, 2] } } }]
   );
 
+  if (result.modifiedCount > 0) {
+    getIO().emit('products_updated');
+  }
+
   res.status(200).json({
     success: true,
     message: `${result.modifiedCount} product(s) prices updated successfully`,
@@ -236,6 +253,10 @@ export const bulkStatusUpdate = asyncHandler(async (req, res, next) => {
     { _id: { $in: ids } },
     { $set: { status: status } }
   );
+
+  if (result.modifiedCount > 0) {
+    getIO().emit('products_updated');
+  }
 
   res.status(200).json({
     success: true,

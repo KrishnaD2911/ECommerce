@@ -5,33 +5,67 @@ import Products from './pages/public/Products';
 import Dashboard from './pages/admin/Dashboard';
 import ProductList from './pages/admin/ProductList';
 import ProductForm from './pages/admin/ProductForm';
+import Login from './pages/public/Login';
+import Register from './pages/public/Register';
+import Cart from './pages/public/Cart';
+import Profile from './pages/public/Profile';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { loadUser } from './redux/authSlice';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadUser());
+  }, [dispatch]);
+
   return (
     <>
       <div className="app-container">
         <Navbar />
-        <main className="main-content">
+        <main className="main-content pt-28">
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Products />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/cart" element={<Cart />} />
 
-            {/* Admin Routes (Auth is mocked in dev via backend middleware) */}
-            <Route path="/admin" element={<Dashboard />} />
-            <Route path="/admin/products" element={<ProductList />} />
-            <Route path="/admin/products/new" element={<ProductForm />} />
-            <Route path="/admin/products/edit/:id" element={<ProductForm />} />
+            {/* Protected User Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+
+            {/* Admin Routes (Protected) */}
+            <Route element={<ProtectedRoute requiredRole="admin" />}>
+              <Route path="/admin" element={<Dashboard />} />
+              <Route path="/admin/products" element={<ProductList />} />
+              <Route path="/admin/products/new" element={<ProductForm />} />
+              <Route path="/admin/products/edit/:id" element={<ProductForm />} />
+            </Route>
           </Routes>
         </main>
       </div>
-      <Toaster position="top-right" />
+      <Toaster 
+        position="bottom-right" 
+        toastOptions={{
+          style: {
+            background: '#0a0a0a',
+            color: '#ffffff',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          },
+        }}
+      />
       
       <style>{`
         .app-container {
           min-height: 100vh;
           display: flex;
           flex-direction: column;
+          background: #000000;
         }
         .main-content {
           flex: 1;

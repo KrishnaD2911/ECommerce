@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { addProduct, editProduct, fetchProduct, clearProduct, clearError } from '../../redux/productSlice';
-import { HiArrowLeft, HiSave, HiOutlineCube, HiOutlinePhotograph, HiX } from 'react-icons/hi';
+import { HiArrowLeft, HiSave, HiOutlineCube, HiOutlinePhotograph, HiX, HiCheck } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 
 const CATEGORIES = [
@@ -82,7 +82,6 @@ const ProductForm = () => {
       [name]: finalValue
     }));
     
-    // Clear validation error when user types
     if (validationErrors[name]) {
       setValidationErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -135,56 +134,66 @@ const ProductForm = () => {
       }
       navigate('/admin/products');
     } catch (err) {
-      // Error is handled in thunk (toast) and stored in redux state
+      // Error handled in thunk
     }
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <Link to="/admin/products" className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-black text-slate-600 shadow-sm transition-colors hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700">
-        <HiArrowLeft /> Back to Products
-      </Link>
-      
-      <div className="panel overflow-hidden">
-        <div className="border-b border-slate-200 bg-slate-950 p-6 text-white md:p-8">
+    <div className="min-h-screen bg-black pb-20">
+      {/* Black Header */}
+      <div className="bg-gradient-to-b from-black to-transparent pt-8 pb-12 px-4 border-b border-white/5">
+        <div className="mx-auto max-w-5xl">
+          <Link to="/admin/products" className="mb-6 inline-flex items-center gap-2 rounded-full bg-[#0a0a0a] px-4 py-2 text-sm font-bold text-zinc-300 shadow-sm border border-white/10 transition-all hover:border-orange-500/30 hover:text-orange-500 hover:-translate-y-0.5">
+            <HiArrowLeft /> Back to Inventory
+          </Link>
+          
           <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-2xl">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500 text-3xl text-black shadow-lg shadow-orange-500/30">
               <HiOutlineCube />
-            </span>
+            </div>
             <div>
-              <h1 className="font-title text-3xl font-black">
-                {isEditMode ? 'Edit Product' : 'Add New Product'}
+              <h1 className="font-title text-4xl font-black text-white tracking-tight">
+                {isEditMode ? 'Edit Product' : 'New Product'}
               </h1>
-              <p className="mt-1 text-sm font-medium text-slate-300">Keep catalog details accurate and ready for shoppers.</p>
+              <p className="mt-1 text-zinc-400 font-medium text-lg">
+                Fill in the details below to update your catalog.
+              </p>
             </div>
           </div>
         </div>
+      </div>
 
+      <div className="mx-auto max-w-5xl px-4 -mt-6 relative z-10">
         {error && (
-          <div className="m-6 rounded-2xl border border-red-200 bg-red-50 p-4 font-semibold text-red-600 md:mx-8">
-            {error}
+          <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 p-5 font-bold text-red-400 shadow-sm flex items-center gap-3">
+            <HiX className="text-xl"/> {error}
           </div>
         )}
 
         {loading && isEditMode && !product ? (
-          <div className="flex justify-center py-12"><div className="loader"></div></div>
+          <div className="flex justify-center py-20 bg-[#0a0a0a] rounded-[32px] border border-white/5 shadow-sm">
+            <div className="loader"></div>
+          </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-7 p-6 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="form-group md:col-span-2">
-                <label className="mb-2 block text-sm font-black text-slate-600">Product Image</label>
-                <div className="grid gap-4 md:grid-cols-[180px_1fr] md:items-stretch">
-                  <div className="flex h-44 items-center justify-center overflow-hidden rounded-3xl border border-slate-200 bg-slate-50">
+          <form onSubmit={handleSubmit} className="bg-[#0a0a0a] rounded-[32px] border border-white/5 shadow-xl shadow-black/50 p-6 md:p-10 space-y-10">
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
+              
+              {/* Image Upload Area */}
+              <div className="md:col-span-2">
+                <label className="mb-3 block text-sm font-bold text-zinc-300 uppercase tracking-wider">Product Visual</label>
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div className="flex h-48 w-48 shrink-0 items-center justify-center overflow-hidden rounded-[24px] border border-white/5 bg-black shadow-inner">
                     {imagePreview ? (
-                      <img src={imagePreview} alt="Product preview" className="h-full w-full object-cover" />
+                      <img src={imagePreview} alt="Preview" className="h-full w-full object-cover transition-transform hover:scale-105 duration-500" />
                     ) : (
-                      <div className="text-center text-slate-400">
-                        <HiOutlinePhotograph className="mx-auto mb-2 text-4xl" />
-                        <span className="text-sm font-bold">No image</span>
+                      <div className="flex flex-col items-center text-zinc-500">
+                        <HiOutlinePhotograph className="text-5xl mb-2 opacity-50" />
+                        <span className="text-xs font-bold uppercase">No Image</span>
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-col justify-center rounded-3xl border border-dashed border-slate-300 bg-white p-5">
+                  <div className="flex flex-1 flex-col justify-center rounded-[24px] border-2 border-dashed border-white/10 bg-black/50 p-6 transition-colors hover:border-orange-500/30 hover:bg-orange-500/5">
                     <input
                       id="product-image"
                       type="file"
@@ -192,162 +201,183 @@ const ProductForm = () => {
                       onChange={handleImageChange}
                       className="sr-only"
                     />
-                    <label htmlFor="product-image" className="btn btn-secondary w-fit cursor-pointer">
-                      <HiOutlinePhotograph />
-                      Upload Image
+                    <label htmlFor="product-image" className="btn bg-[#0a0a0a] border border-white/10 text-zinc-300 hover:border-orange-500/30 hover:text-orange-500 w-fit cursor-pointer shadow-sm">
+                      <HiOutlinePhotograph className="text-lg" />
+                      Browse Files
                     </label>
-                    <p className="mt-3 text-sm font-medium text-slate-500">JPEG, PNG, GIF, or WebP up to 5MB.</p>
+                    <p className="mt-4 text-sm font-medium text-zinc-500">Supports JPEG, PNG, GIF, or WebP (max 5MB).</p>
                     {formData.imageFile && (
-                      <button type="button" onClick={clearSelectedImage} className="mt-4 inline-flex w-fit items-center gap-2 text-sm font-black text-red-600 hover:text-red-700">
-                        <HiX /> Remove selected image
+                      <button type="button" onClick={clearSelectedImage} className="mt-4 inline-flex w-fit items-center gap-1.5 text-sm font-bold text-red-400 hover:text-red-300 transition-colors">
+                        <HiX className="text-base" /> Remove selection
                       </button>
                     )}
                   </div>
                 </div>
               </div>
+
+              {/* General Info Section */}
+              <div className="md:col-span-2">
+                <h3 className="font-title text-xl font-bold text-white border-b border-white/5 pb-3 mb-6">General Information</h3>
+              </div>
               
               {/* Name */}
               <div className="form-group md:col-span-2">
-                <label className="mb-2 block text-sm font-black text-slate-600">Product Name *</label>
+                <label className="mb-2 block text-sm font-bold text-zinc-300">Product Name *</label>
                 <input 
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className={`form-control ${validationErrors.name ? 'border-red-500 focus:border-red-500' : ''}`}
+                  className={`form-control text-lg py-3 rounded-xl bg-black focus:bg-[#0a0a0a] ${validationErrors.name ? 'border-red-500 ring-4 ring-red-500/10' : ''}`}
                   placeholder="e.g. Premium Wireless Headphones"
                 />
-                {validationErrors.name && <p className="mt-2 text-xs font-bold text-red-600">{validationErrors.name}</p>}
+                {validationErrors.name && <p className="mt-2 text-sm font-bold text-red-500">{validationErrors.name}</p>}
               </div>
 
               {/* SKU */}
               <div className="form-group">
-                <label className="mb-2 block text-sm font-black text-slate-600">SKU *</label>
+                <label className="mb-2 block text-sm font-bold text-zinc-300">Stock Keeping Unit (SKU) *</label>
                 <input 
                   type="text"
                   name="sku"
                   value={formData.sku}
                   onChange={handleChange}
-                  className={`form-control font-mono uppercase ${validationErrors.sku ? 'border-red-500' : ''}`}
+                  className={`form-control font-mono text-lg uppercase py-3 rounded-xl bg-black focus:bg-[#0a0a0a] ${validationErrors.sku ? 'border-red-500 ring-4 ring-red-500/10' : ''}`}
                   placeholder="WH-001"
                 />
-                {validationErrors.sku && <p className="mt-2 text-xs font-bold text-red-600">{validationErrors.sku}</p>}
-                <p className="mt-2 text-xs font-semibold text-slate-400">Must be unique. Spaces convert to hyphens.</p>
+                {validationErrors.sku ? (
+                   <p className="mt-2 text-sm font-bold text-red-500">{validationErrors.sku}</p>
+                ) : (
+                   <p className="mt-2 text-xs font-semibold text-zinc-500">Must be unique. Spaces auto-convert to hyphens.</p>
+                )}
               </div>
 
               {/* Category */}
               <div className="form-group">
-                <label className="mb-2 block text-sm font-black text-slate-600">Category *</label>
+                <label className="mb-2 block text-sm font-bold text-zinc-300">Category *</label>
                 <select 
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className={`form-control ${validationErrors.category ? 'border-red-500' : ''}`}
+                  className={`form-control text-lg py-3 rounded-xl bg-black focus:bg-[#0a0a0a] ${validationErrors.category ? 'border-red-500 ring-4 ring-red-500/10' : ''}`}
                 >
-                  <option value="">Select Category</option>
+                  <option value="">Select Category...</option>
                   {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
-                {validationErrors.category && <p className="mt-2 text-xs font-bold text-red-600">{validationErrors.category}</p>}
+                {validationErrors.category && <p className="mt-2 text-sm font-bold text-red-500">{validationErrors.category}</p>}
+              </div>
+
+              {/* Pricing & Inventory Section */}
+              <div className="md:col-span-2 mt-4">
+                <h3 className="font-title text-xl font-bold text-white border-b border-white/5 pb-3 mb-6">Pricing & Inventory</h3>
               </div>
 
               {/* Price */}
-              <div className="form-group">
-                <label className="mb-2 block text-sm font-black text-slate-600">Price ($) *</label>
-                <input 
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  className={`form-control ${validationErrors.price ? 'border-red-500' : ''}`}
-                  placeholder="0.00"
-                />
-                {validationErrors.price && <p className="mt-2 text-xs font-bold text-red-600">{validationErrors.price}</p>}
+              <div className="form-group relative">
+                <label className="mb-2 block text-sm font-bold text-zinc-300">Price *</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold text-lg">$</span>
+                  <input 
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleChange}
+                    className={`form-control text-lg py-3 pl-10 rounded-xl bg-black focus:bg-[#0a0a0a] ${validationErrors.price ? 'border-red-500 ring-4 ring-red-500/10' : ''}`}
+                    placeholder="0.00"
+                  />
+                </div>
+                {validationErrors.price && <p className="mt-2 text-sm font-bold text-red-500">{validationErrors.price}</p>}
               </div>
 
               {/* Stock */}
-              <div className="form-group">
-                <label className="mb-2 block text-sm font-black text-slate-600">Stock Quantity *</label>
+              <div className="form-group relative">
+                <label className="mb-2 block text-sm font-bold text-zinc-300">Stock Quantity *</label>
                 <input 
                   type="number"
                   min="0"
                   name="stock"
                   value={formData.stock}
                   onChange={handleChange}
-                  className={`form-control ${validationErrors.stock ? 'border-red-500' : ''}`}
+                  className={`form-control text-lg py-3 rounded-xl bg-black focus:bg-[#0a0a0a] ${validationErrors.stock ? 'border-red-500 ring-4 ring-red-500/10' : ''}`}
                   placeholder="0"
                 />
-                {validationErrors.stock && <p className="mt-2 text-xs font-bold text-red-600">{validationErrors.stock}</p>}
+                {validationErrors.stock && <p className="mt-2 text-sm font-bold text-red-500">{validationErrors.stock}</p>}
               </div>
 
               {/* Status */}
               <div className="form-group md:col-span-2">
-                <label className="mb-3 block text-sm font-black text-slate-600">Product Status</label>
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <label className={`cursor-pointer rounded-2xl border p-4 transition-colors ${formData.status === 'active' ? 'border-teal-300 bg-teal-50 text-teal-800' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'}`}>
-                    <input 
-                      type="radio" 
-                      name="status" 
-                      value="active"
-                      checked={formData.status === 'active'}
-                      onChange={handleChange}
-                      className="sr-only"
-                    />
-                    <span className="text-sm font-black">Active</span>
+                <label className="mb-3 block text-sm font-bold text-zinc-300">Visibility Status</label>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <label className={`relative cursor-pointer rounded-2xl border-2 p-5 transition-all ${formData.status === 'active' ? 'border-orange-500 bg-orange-500/10 shadow-md shadow-orange-500/10' : 'border-white/10 bg-black hover:border-orange-500/30 hover:bg-orange-500/5'}`}>
+                    <input type="radio" name="status" value="active" checked={formData.status === 'active'} onChange={handleChange} className="sr-only" />
+                    <div className="flex flex-col items-center text-center">
+                      <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-full ${formData.status === 'active' ? 'bg-orange-500 text-black' : 'bg-[#0a0a0a] text-zinc-500'}`}>
+                        <HiCheck className="text-xl" />
+                      </div>
+                      <span className={`text-sm font-black ${formData.status === 'active' ? 'text-orange-500' : 'text-zinc-400'}`}>Active</span>
+                      <span className="mt-1 text-xs font-medium text-zinc-500">Visible to customers</span>
+                    </div>
                   </label>
-                  <label className={`cursor-pointer rounded-2xl border p-4 transition-colors ${formData.status === 'inactive' ? 'border-slate-400 bg-slate-100 text-slate-900' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'}`}>
-                    <input 
-                      type="radio" 
-                      name="status" 
-                      value="inactive"
-                      checked={formData.status === 'inactive'}
-                      onChange={handleChange}
-                      className="sr-only"
-                    />
-                    <span className="text-sm font-black">Inactive</span>
+
+                  <label className={`relative cursor-pointer rounded-2xl border-2 p-5 transition-all ${formData.status === 'inactive' ? 'border-zinc-500 bg-zinc-800 shadow-md' : 'border-white/10 bg-black hover:border-zinc-500/30 hover:bg-zinc-800/50'}`}>
+                    <input type="radio" name="status" value="inactive" checked={formData.status === 'inactive'} onChange={handleChange} className="sr-only" />
+                    <div className="flex flex-col items-center text-center">
+                      <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-full ${formData.status === 'inactive' ? 'bg-zinc-600 text-white' : 'bg-[#0a0a0a] text-zinc-500'}`}>
+                        <HiX className="text-xl" />
+                      </div>
+                      <span className={`text-sm font-black ${formData.status === 'inactive' ? 'text-white' : 'text-zinc-400'}`}>Inactive</span>
+                      <span className="mt-1 text-xs font-medium text-zinc-500">Hidden from catalog</span>
+                    </div>
                   </label>
-                  <label className={`cursor-pointer rounded-2xl border p-4 transition-colors ${formData.status === 'out_of_stock' ? 'border-red-300 bg-red-50 text-red-700' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'}`}>
-                    <input 
-                      type="radio" 
-                      name="status" 
-                      value="out_of_stock"
-                      checked={formData.status === 'out_of_stock'}
-                      onChange={handleChange}
-                      className="sr-only"
-                    />
-                    <span className="text-sm font-black">Out of Stock</span>
+
+                  <label className={`relative cursor-pointer rounded-2xl border-2 p-5 transition-all ${formData.status === 'out_of_stock' ? 'border-red-500/50 bg-red-500/10 shadow-md shadow-red-500/10' : 'border-white/10 bg-black hover:border-red-500/30 hover:bg-red-500/5'}`}>
+                    <input type="radio" name="status" value="out_of_stock" checked={formData.status === 'out_of_stock'} onChange={handleChange} className="sr-only" />
+                    <div className="flex flex-col items-center text-center">
+                      <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-full ${formData.status === 'out_of_stock' ? 'bg-red-500 text-white' : 'bg-[#0a0a0a] text-zinc-500'}`}>
+                        <HiOutlineCube className="text-xl" />
+                      </div>
+                      <span className={`text-sm font-black ${formData.status === 'out_of_stock' ? 'text-red-400' : 'text-zinc-400'}`}>Out of Stock</span>
+                      <span className="mt-1 text-xs font-medium text-zinc-500">Visible but unpurchasable</span>
+                    </div>
                   </label>
                 </div>
               </div>
 
+              {/* Description Section */}
+              <div className="md:col-span-2 mt-4">
+                <h3 className="font-title text-xl font-bold text-white border-b border-white/5 pb-3 mb-6">Additional Details</h3>
+              </div>
+
               {/* Description */}
               <div className="form-group md:col-span-2">
-                <label className="mb-2 block text-sm font-black text-slate-600">Description *</label>
+                <label className="mb-2 block text-sm font-bold text-zinc-300">Detailed Description *</label>
                 <textarea 
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  rows="4"
-                  className={`form-control ${validationErrors.description ? 'border-red-500' : ''}`}
-                  placeholder="Product description..."
+                  rows="5"
+                  className={`form-control text-base py-4 rounded-[16px] bg-black focus:bg-[#0a0a0a] ${validationErrors.description ? 'border-red-500 ring-4 ring-red-500/10' : ''}`}
+                  placeholder="Describe the product's features, dimensions, materials, etc..."
                 ></textarea>
-                {validationErrors.description && <p className="mt-2 text-xs font-bold text-red-600">{validationErrors.description}</p>}
+                {validationErrors.description && <p className="mt-2 text-sm font-bold text-red-500">{validationErrors.description}</p>}
               </div>
 
             </div>
 
-            <div className="flex justify-end gap-3 border-t border-slate-200 pt-6">
-              <Link to="/admin/products" className="btn btn-secondary px-6">
+            {/* Action Buttons */}
+            <div className="mt-10 flex items-center justify-end gap-4 rounded-[24px] bg-black p-6 border border-white/5">
+              <Link to="/admin/products" className="btn bg-[#0a0a0a] border border-white/10 text-zinc-300 hover:bg-[#0a0a0a] hover:text-white hover:border-white/30 px-6 py-3 rounded-xl font-bold text-base">
                 Cancel
               </Link>
               <button 
                 type="submit" 
-                className="btn btn-primary px-6 flex items-center gap-2"
+                className="btn btn-primary px-8 py-3 rounded-xl font-bold text-base shadow-lg shadow-orange-500/30 flex items-center gap-2"
                 disabled={loading}
               >
-                {loading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : <HiSave />}
-                {isEditMode ? 'Update Product' : 'Save Product'}
+                {loading ? <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : <HiSave className="text-xl" />}
+                {isEditMode ? 'Save Changes' : 'Publish Product'}
               </button>
             </div>
           </form>

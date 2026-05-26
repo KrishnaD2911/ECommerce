@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts, setFilters, clearFilters, setPage } from '../../redux/productSlice';
 import ProductCard from '../../components/ProductCard';
-import heroImage from '../../assets/hero.png';
 import { HiSearch, HiChevronLeft, HiChevronRight, HiFilter, HiOutlineSparkles } from 'react-icons/hi';
+import { io } from 'socket.io-client';
+import FloatingLines from '../../components/Lines';
+import Pagination from '@mui/material/Pagination';
 
 const Products = () => {
   const dispatch = useDispatch();
@@ -27,6 +29,18 @@ const Products = () => {
 
   useEffect(() => {
     dispatch(fetchProducts());
+
+    // Setup socket connection for real-time updates
+    const socket = io('http://localhost:5080'); // Replace with process.env.VITE_API_URL if needed
+    
+    socket.on('products_updated', () => {
+      // Re-fetch products quietly
+      dispatch(fetchProducts());
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, [dispatch, page, filters]);
 
   const handleSortChange = (e) => {
@@ -49,63 +63,105 @@ const Products = () => {
   };
 
   return (
-    <div className="min-h-screen pb-20">
-      <section
-        className="relative min-h-[430px] overflow-hidden bg-slate-950 px-4 py-16 text-white"
-        style={{
-          backgroundImage: `linear-gradient(90deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.62), rgba(15, 23, 42, 0.34)), url(${heroImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="mx-auto flex max-w-7xl flex-col justify-end gap-8 pt-12 md:min-h-[340px] md:flex-row md:items-end md:justify-between">
-          <div className="max-w-3xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-bold text-teal-100 backdrop-blur">
-              <HiOutlineSparkles />
-              Curated essentials
-            </div>
-            <h1 className="font-title text-5xl font-black leading-[1.02] md:text-7xl">
-              Discover Premium Gear
-            </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-200">
-              Shop refined picks across electronics, apparel, home, books, and everyday favorites.
-            </p>
-          </div>
-
-          <div className="w-full max-w-xl rounded-[24px] border border-white/18 bg-white/12 p-3 shadow-2xl shadow-slate-950/30 backdrop-blur-xl">
-            <div className="relative">
-              <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search by name or SKU"
-                className="h-14 w-full rounded-2xl border-0 bg-white pl-12 pr-4 text-base font-semibold text-slate-950 shadow-sm outline-none ring-0 transition focus:shadow-[0_0_0_4px_rgba(20,184,166,0.22)]"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
+    <div className="relative min-h-screen bg-black pb-20">    
+      {/* Hero Section with Floating Lines */}
+      <section className="relative overflow-hidden bg-black px-4 pt-32 pb-28">
+        <div className="absolute inset-0 z-0">
+          <FloatingLines
+            enabledWaves={["top","middle","bottom"]}
+            // Array - specify line count per wave; Number - same count for all waves
+            lineCount={8}
+            // Array - specify line distance per wave; Number - same distance for all waves
+            lineDistance={8}
+            bendRadius={8}
+            bendStrength={-2}
+            interactive
+            parallax={true}
+            animationSpeed={1}
+            gradientStart="#d14d06"
+            gradientMid="#fa7c22"
+            gradientEnd="#f79c52"
+          />
         </div>
+        
+        {/* Top Gradient */}
+        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-black to-transparent z-[1]"></div>
+        
+        {/* Bottom Gradient */}
+        <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-black to-transparent z-[1]"></div>
+
+        <div className="mx-auto max-w-7xl relative z-10 pointer-events-none mt-4">
+          <div className="flex flex-col items-center text-center max-w-4xl mx-auto pointer-events-auto">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-1.5 py-1 shadow-sm backdrop-blur-sm">
+              <span className="bg-orange-500 text-black text-xs font-black px-2.5 py-0.5 rounded-full">NEW</span>
+              <span className="text-sm font-semibold text-zinc-300 pr-2.5">Just shipped v2.0</span>
+            </div>
+            
+            <h1 className="font-title text-5xl md:text-7xl font-black tracking-tight text-black leading-tight mb-6 drop-shadow-[0_0_10px_white]">
+              Curated gear for <br/> </h1>
+              <h1 className="font-title text-5xl md:text-7xl font-black tracking-tight text-black leading-tight mb-6 drop-shadow-[0_0_10px_black]">
+              <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent drop-shadow-[0_0_10px_black]">
+                modern lifestyles.
+              </span>
+            </h1>
+            
+            <p className="max-w-2xl text-lg md:text-xl text-black mb-10 leading-relaxed">
+              Discover our hand-picked selection of premium electronics, apparel, and everyday essentials designed to elevate your routine.
+            </p>
+
+            <div className="flex items-center gap-4">
+              <div className="w-full max-w-lg relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
+                <div className="relative flex items-center bg-[#0a0a0a]/80 backdrop-blur-md rounded-full border border-white/10 shadow-2xl pl-5 pr-2 py-1.5">
+                  <HiSearch className="text-xl text-orange-500 mr-2 shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    className="h-10 w-full bg-transparent text-base font-medium text-white placeholder:text-zinc-500 outline-none"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <button className="h-10 px-5 rounded-full bg-white text-black font-bold text-sm transition-colors hover:bg-zinc-200 shadow-md shadow-white/10 shrink-0">
+                    Search
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>  
       </section>
 
-      <main className="relative z-10 mx-auto -mt-7 max-w-7xl px-4">
-        <div className="panel mb-8 flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="flex items-center gap-2 font-title text-lg font-black text-slate-950">
-              <HiFilter className="text-teal-600" />
-              Product Catalog
+      {/* Main Catalog Area */}
+      <main className="mx-auto max-w-7xl px-4 pt-4">
+        {/* Filters Bar */}
+        <div className="bg-[#0a0a0a] rounded-2xl border border-white/5 shadow-sm p-4 mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 px-2">
+            <div className="h-10 w-10 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center">
+              <HiFilter className="text-xl" />
             </div>
-            <p className="mt-1 text-sm font-medium text-slate-500">{totalProducts} active products</p>
+            <div>
+              <h2 className="font-title text-lg font-black text-white leading-tight">Catalog</h2>
+              <p className="text-sm font-medium text-zinc-500">{totalProducts} active items</p>
+            </div>
           </div>
 
-          <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-3 md:w-auto">
-            <select className="form-control min-w-44" value={filters.status || ''} onChange={handleStatusChange}>
+          <div className="flex flex-col sm:flex-row w-full md:w-auto gap-3">
+            <select 
+              className="h-11 rounded-xl border border-white/10 bg-black px-4 text-sm font-semibold text-zinc-300 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all min-w-[140px]" 
+              value={filters.status || ''} 
+              onChange={handleStatusChange}
+            >
               <option value="">All Statuses</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
               <option value="out_of_stock">Out of Stock</option>
             </select>
 
-            <select className="form-control min-w-52" value={filters.category || ''} onChange={handleCategoryChange}>
+            <select 
+              className="h-11 rounded-xl border border-white/10 bg-black px-4 text-sm font-semibold text-zinc-300 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all min-w-[160px]" 
+              value={filters.category || ''} 
+              onChange={handleCategoryChange}
+            >
               <option value="">All Categories</option>
               <option value="Electronics">Electronics</option>
               <option value="Clothing">Clothing</option>
@@ -116,7 +172,11 @@ const Products = () => {
               <option value="Automotive">Automotive</option>
             </select>
 
-            <select className="form-control min-w-52" value={filters.sort || '-createdAt'} onChange={handleSortChange}>
+            <select 
+              className="h-11 rounded-xl border border-white/10 bg-black px-4 text-sm font-semibold text-zinc-300 outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all min-w-[180px]" 
+              value={filters.sort || '-createdAt'} 
+              onChange={handleSortChange}
+            >
               <option value="-createdAt">Newest Arrivals</option>
               <option value="createdAt">Oldest First</option>
               <option value="price">Price: Low to High</option>
@@ -126,7 +186,7 @@ const Products = () => {
         </div>
 
         {error && (
-          <div className="mb-8 rounded-2xl border border-red-200 bg-red-50 p-5 text-center font-semibold text-red-600">
+          <div className="mb-10 rounded-2xl border border-red-500/20 bg-red-500/10 p-6 text-center font-bold text-red-400 shadow-sm">
             {error}
           </div>
         )}
@@ -134,32 +194,34 @@ const Products = () => {
         {loading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-[430px] rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="skeleton h-52 rounded-[18px]" />
-                <div className="mt-5 space-y-3">
-                  <div className="skeleton h-4 w-1/3 rounded-full" />
-                  <div className="skeleton h-7 w-4/5 rounded-full" />
-                  <div className="skeleton h-4 w-full rounded-full" />
-                  <div className="skeleton h-4 w-2/3 rounded-full" />
+              <div key={i} className="h-[430px] rounded-2xl border border-white/5 bg-[#0a0a0a] p-4 shadow-sm">
+                <div className="h-52 w-full animate-pulse rounded-xl bg-black/50" />
+                <div className="mt-6 space-y-4 px-2">
+                  <div className="h-4 w-1/3 animate-pulse rounded-full bg-white/5" />
+                  <div className="h-6 w-4/5 animate-pulse rounded-full bg-white/5" />
+                  <div className="h-4 w-full animate-pulse rounded-full bg-white/5" />
+                  <div className="h-6 w-1/2 animate-pulse rounded-full bg-white/5 mt-6" />
                 </div>
               </div>
             ))}
           </div>
         ) : products.length === 0 ? (
-          <div className="panel py-20 text-center">
-            <HiSearch className="mx-auto mb-4 text-5xl text-slate-300" />
-            <h3 className="font-title text-2xl font-black text-slate-950">No products found</h3>
-            <p className="mx-auto mt-2 max-w-md text-slate-500">
-              We could not find anything matching the current filters.
+          <div className="rounded-[32px] border border-white/5 bg-[#0a0a0a] py-24 text-center shadow-sm">
+            <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-orange-500/10">
+              <HiSearch className="text-5xl text-orange-500" />
+            </div>
+            <h3 className="font-title text-3xl font-black text-white">No products found</h3>
+            <p className="mx-auto mt-3 max-w-md text-lg text-zinc-400 font-medium">
+              We couldn't find anything matching your current filters. Try adjusting your search.
             </p>
             <button
               onClick={() => {
                 setSearchTerm('');
                 dispatch(clearFilters());
               }}
-              className="btn btn-primary mt-6"
+              className="mt-8 inline-flex items-center gap-2 rounded-xl bg-orange-500 px-6 py-3 font-bold text-black shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-0.5 hover:bg-orange-600"
             >
-              Clear Filters
+              Clear All Filters
             </button>
           </div>
         ) : (
@@ -171,32 +233,35 @@ const Products = () => {
             </div>
 
             {pages > 1 && (
-              <div className="mt-12 flex justify-center">
-                <div className="panel flex items-center gap-4 rounded-full px-4 py-3">
-                  <button
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page === 1}
-                    className="btn btn-secondary h-10 w-10 rounded-full p-0"
-                    title="Previous page"
-                  >
-                    <HiChevronLeft className="text-xl" />
-                  </button>
-                  <span className="px-2 text-sm font-black text-slate-700">Page {page} of {pages}</span>
-                  <button
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page === pages}
-                    className="btn btn-secondary h-10 w-10 rounded-full p-0"
-                    title="Next page"
-                  >
-                    <HiChevronRight className="text-xl" />
-                  </button>
-                </div>
+              <div className="mt-16 flex justify-center">
+                <Pagination 
+                                  count={pages} 
+                                  page={page} 
+                                  onChange={(e, value) => handlePageChange(value)} 
+                                  variant="outlined" 
+                                  color="orange"
+                                  size="large"
+                                  sx={{
+                                    '& .MuiPaginationItem-root': {
+                                      color: '#ff8800', // zinc-400
+                                      borderColor: 'rgb(217, 105, 0)',
+                                    },
+                                    '& .Mui-selected': {
+                                      backgroundColor: 'rgba(249, 115, 22, 0.1) !important', // orange-500 with opacity
+                                      borderColor: 'rgba(255, 106, 0, 0.96)',
+                                      color: '#f97316', // orange-500
+                                    },
+                                    '& .MuiPaginationItem-root:hover': {
+                                      backgroundColor: 'rgba(255, 106, 0, 0.05)',
+                    }
+                  }}
+                />
               </div>
             )}
           </>
         )}
       </main>
-    </div>
+    </div>    
   );
 };
 

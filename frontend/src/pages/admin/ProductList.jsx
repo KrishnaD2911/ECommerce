@@ -14,7 +14,8 @@ import SearchBar from '../../components/SearchBar';
 import Filters from '../../components/Filters';
 import ProductTable from '../../components/ProductTable';
 import BulkToolbar from '../../components/BulkToolbar';
-import { HiPlus, HiChevronLeft, HiChevronRight, HiOutlineViewGrid } from 'react-icons/hi';
+import { HiPlus, HiChevronLeft, HiChevronRight, HiOutlineViewGrid, HiOutlineCollection } from 'react-icons/hi';
+import Pagination from '@mui/material/Pagination';
 
 const ProductList = () => {
   const dispatch = useDispatch();
@@ -77,74 +78,108 @@ const ProductList = () => {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <header className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-sm font-black text-teal-700">
-            <HiOutlineViewGrid />
-            Inventory
+    <div className="min-h-screen bg-black pb-20">
+      
+      {/* Black Header */}
+      <div className="bg-black pt-8 pb-10 px-4 border-b border-white/5 mb-8">
+        <div className="mx-auto max-w-7xl flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex items-center gap-5">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-500 text-3xl text-black shadow-lg shadow-orange-500/30">
+              <HiOutlineCollection />
+            </div>
+            <div>
+              <div className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-0.5 text-xs font-black text-orange-500 uppercase tracking-wide">
+                <HiOutlineViewGrid />
+                Inventory
+              </div>
+              <h1 className="font-title text-4xl font-black text-white tracking-tight">Manage Products</h1>
+              <p className="mt-1 text-base font-medium text-zinc-500">{totalProducts} products in the current view</p>
+            </div>
           </div>
-          <h1 className="font-title text-4xl font-black text-slate-950">Manage Products</h1>
-          <p className="mt-2 text-base font-medium text-slate-500">{totalProducts} products in the current view</p>
+          
+          <div>
+            <Link to="/admin/products/new" className="btn btn-primary px-6 shadow-lg shadow-orange-500/20 flex items-center gap-2">
+              <HiPlus className="text-lg" />
+              Add Product
+            </Link>
+          </div>
         </div>
-        <Link to="/admin/products/new" className="btn btn-primary">
-          <HiPlus className="text-lg" />
-          Add Product
-        </Link>
-      </header>
-
-      <div className="mb-6 grid gap-5 lg:grid-cols-[1fr_340px]">
-        <Filters />
-        <aside className="panel flex flex-col justify-center p-5">
-          <label className="mb-3 block text-sm font-black text-slate-600">Quick Search</label>
-          <SearchBar />
-        </aside>
       </div>
 
-      <BulkToolbar
-        selectedCount={selectedIds.length}
-        onDelete={handleBulkDelete}
-        onPriceUpdate={handleBulkPriceUpdate}
-        onStatusUpdate={handleBulkStatusUpdate}
-        onClearSelection={() => setSelectedIds([])}
-      />
+      <div className="mx-auto max-w-7xl px-4 relative z-10">
+        
+        {/* Search & Filters Grid */}
+        <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_340px]">
+          <div className="bg-[#0a0a0a] rounded-[24px] border border-white/5 shadow-sm p-2">
+            <Filters />
+          </div>
+          <aside className="bg-[#0a0a0a] rounded-[24px] border border-white/5 shadow-sm p-5 flex flex-col justify-center">
+            <label className="mb-3 block text-sm font-bold text-zinc-300 uppercase tracking-wide">Quick Search</label>
+            <SearchBar />
+          </aside>
+        </div>  
 
-      {error && (
-        <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 font-semibold text-red-600">
-          {error}
-        </div>
-      )}
+        <BulkToolbar
+          selectedCount={selectedIds.length}
+          onDelete={handleBulkDelete}
+          onPriceUpdate={handleBulkPriceUpdate}
+          onStatusUpdate={handleBulkStatusUpdate}
+          onClearSelection={() => setSelectedIds([])}
+        />
 
-      {loading && products.length === 0 ? (
-        <div className="flex justify-center py-20">
-          <div className="loader" />
-        </div>
-      ) : (
-        <>
-          <ProductTable
-            products={products}
-            selectedIds={selectedIds}
-            onSelectAll={handleSelectAll}
-            onSelectOne={handleSelectOne}
-            onDelete={handleDelete}
-            onRestore={handleRestore}
-          />
+        {error && (
+          <div className="mb-8 rounded-2xl border border-red-500/20 bg-red-500/10 p-5 font-bold text-red-400 shadow-sm">
+            {error}
+          </div>
+        )}
 
-          {pages > 1 && (
-            <div className="panel mt-6 flex items-center justify-between rounded-2xl p-4">
-              <span className="text-sm font-black text-slate-500">Page {page} of {pages}</span>
-              <div className="flex gap-2">
-                <button onClick={() => handlePageChange(page - 1)} disabled={page === 1} className="btn btn-secondary">
-                  <HiChevronLeft /> Prev
-                </button>
-                <button onClick={() => handlePageChange(page + 1)} disabled={page === pages} className="btn btn-secondary">
-                  Next <HiChevronRight />
-                </button>
+        {loading && products.length === 0 ? (
+          <div className="flex justify-center py-24 bg-[#0a0a0a] rounded-[32px] border border-white/5 shadow-sm">
+            <div className="loader" />
+          </div>
+        ) : (
+          <div className="bg-[#0a0a0a] rounded-[32px] border border-white/5 shadow-xl shadow-black/50 overflow-hidden">
+            <ProductTable
+              products={products}
+              selectedIds={selectedIds}
+              onSelectAll={handleSelectAll}
+              onSelectOne={handleSelectOne}
+              onDelete={handleDelete}
+              onRestore={handleRestore}
+            />
+
+            {pages > 1 && (
+              <div className="flex items-center justify-between border-t border-white/5 bg-black p-6">
+                <span className="text-sm font-black text-zinc-500">
+                  Page <span className="text-orange-500">{page}</span> of {pages}
+                </span>
+                <Pagination 
+                  count={pages} 
+                  page={page} 
+                  onChange={(e, value) => handlePageChange(value)} 
+                  variant="outlined" 
+                  color="orange"
+                  size="large"
+                  sx={{
+                    '& .MuiPaginationItem-root': {
+                      color: '#ff8800', // zinc-400
+                      borderColor: 'rgb(217, 105, 0)',
+                    },
+                    '& .Mui-selected': {
+                      backgroundColor: 'rgba(249, 115, 22, 0.1) !important', // orange-500 with opacity
+                      borderColor: 'rgba(255, 106, 0, 0.96)',
+                      color: '#f97316', // orange-500
+                    },
+                    '& .MuiPaginationItem-root:hover': {
+                      backgroundColor: 'rgba(255, 106, 0, 0.05)',
+                    }
+                  }}
+                />
               </div>
-            </div>
-          )}
-        </>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -48,12 +48,12 @@ const Filters = () => {
     <section className="panel p-5">
       <div className="mb-5 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-teal-50 text-teal-700">
+          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-500">
             <HiFilter className="text-xl" />
           </span>
           <div>
-            <h3 className="font-title text-lg font-black text-slate-950">Filters</h3>
-            <p className="text-sm font-medium text-slate-500">Refine the inventory view</p>
+            <h3 className="font-title text-lg font-black text-white">Filters</h3>
+            <p className="text-sm font-medium text-zinc-500">Refine the inventory view</p>
           </div>
         </div>
         <button onClick={() => dispatch(clearFilters())} className="btn btn-secondary px-3" title="Reset filters">
@@ -70,8 +70,8 @@ const Filters = () => {
             onClick={() => handleStatusChange(option.value)}
             className={`rounded-full px-4 py-2 text-sm font-extrabold transition-colors ${
               filters.status === option.value
-                ? 'bg-slate-950 text-white'
-                : 'border border-slate-200 bg-white text-slate-600 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700'
+                ? 'bg-white text-black'
+                : 'border border-white/10 bg-black text-zinc-400 hover:border-orange-500/30 hover:bg-orange-500/5 hover:text-orange-500'
             }`}
           >
             {option.label}
@@ -79,7 +79,7 @@ const Filters = () => {
         ))}
       </div>
 
-      <div className="mb-5 flex flex-wrap gap-2 border-t border-slate-100 pt-5">
+      <div className="mb-5 flex flex-wrap gap-2 border-t border-white/5 pt-5">
         {deletedOptions.map((option) => (
           <button
             key={option.value}
@@ -87,8 +87,8 @@ const Filters = () => {
             onClick={() => handleDeletedChange(option.value)}
             className={`rounded-full px-4 py-2 text-sm font-extrabold transition-colors ${
               filters.deleted === option.value
-                ? 'bg-teal-700 text-white'
-                : 'border border-slate-200 bg-white text-slate-600 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700'
+                ? 'bg-orange-500 text-black'
+                : 'border border-white/10 bg-black text-zinc-400 hover:border-orange-500/30 hover:bg-orange-500/5 hover:text-orange-500'
             }`}
           >
             {option.label}
@@ -98,7 +98,7 @@ const Filters = () => {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <label className="space-y-2">
-          <span className="text-sm font-bold text-slate-600">Category</span>
+          <span className="text-sm font-bold text-zinc-400">Category</span>
           <select name="category" value={filters.category} onChange={handleFilterChange} className="form-control">
             <option value="">All Categories</option>
             {CATEGORIES.map(cat => (
@@ -108,7 +108,7 @@ const Filters = () => {
         </label>
 
         <label className="space-y-2">
-          <span className="text-sm font-bold text-slate-600">Sort By</span>
+          <span className="text-sm font-bold text-zinc-400">Sort By</span>
           <select name="sort" value={filters.sort} onChange={handleFilterChange} className="form-control">
             <option value="-createdAt">Latest First</option>
             <option value="createdAt">Oldest First</option>
@@ -118,12 +118,12 @@ const Filters = () => {
         </label>
 
         <label className="space-y-2">
-          <span className="text-sm font-bold text-slate-600">From Date</span>
+          <span className="text-sm font-bold text-zinc-400">From Date</span>
           <input type="date" name="dateFrom" value={filters.dateFrom} onChange={handleFilterChange} className="form-control" />
         </label>
 
         <label className="space-y-2">
-          <span className="text-sm font-bold text-slate-600">To Date</span>
+          <span className="text-sm font-bold text-zinc-400">To Date</span>
           <input type="date" name="dateTo" value={filters.dateTo} onChange={handleFilterChange} className="form-control" />
         </label>
       </div>

@@ -12,6 +12,7 @@ import {
   HiArrowRight,
   HiPlus,
   HiOutlineSparkles,
+  HiOutlineViewGrid
 } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 
@@ -36,7 +37,7 @@ const Dashboard = () => {
   }
 
   if (error) {
-    return <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-red-200 bg-red-50 p-8 text-center font-semibold text-red-600">Error loading dashboard: {error}</div>;
+    return <div className="mx-auto mt-8 max-w-4xl rounded-2xl border border-red-500/20 bg-red-500/10 p-8 text-center font-semibold text-red-400">Error loading dashboard: {error}</div>;
   }
 
   const totals = stats?.totals || {
@@ -55,121 +56,137 @@ const Dashboard = () => {
   const formatNumber = (val) => new Intl.NumberFormat('en-US').format(val || 0);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <section className="mb-8 overflow-hidden rounded-[28px] bg-slate-950 p-6 text-white shadow-2xl shadow-slate-950/15 md:p-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-sm font-black text-teal-100">
-              <HiOutlineSparkles />
-              Admin Portal
+    <div className="min-h-screen bg-black pb-20">
+      {/* Black Header */}
+      <div className="bg-black pt-8 pb-12 px-4 border-b border-white/5">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex items-center gap-5">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-500 text-3xl text-black shadow-lg shadow-orange-500/30">
+                <HiOutlineViewGrid />
+              </div>
+              <div>
+                <div className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-0.5 text-xs font-black text-orange-500 uppercase tracking-wide">
+                  <HiOutlineSparkles />
+                  Admin Portal
+                </div>
+                <h1 className="font-title text-4xl md:text-5xl font-black text-white tracking-tight">Overview</h1>
+              </div>
             </div>
-            <h1 className="font-title text-4xl font-black md:text-5xl">Overview</h1>
-            <p className="mt-3 max-w-2xl text-slate-300">
-              Current inventory health, category mix, and the latest product activity.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Link to="/admin/products" className="btn border-white/12 bg-white/10 text-white hover:bg-white/15">
-              Manage Inventory
-            </Link>
-            <Link to="/admin/products/new" className="btn bg-white text-slate-950 hover:bg-teal-50">
-              <HiPlus /> Add Product
-            </Link>
+            
+            <div className="flex flex-wrap gap-3">
+              <Link to="/admin/products" className="btn bg-[#0a0a0a] border border-white/10 text-zinc-300 hover:border-orange-500/30 hover:text-orange-500 shadow-sm px-6">
+                Manage Inventory
+              </Link>
+              <Link to="/admin/products/new" className="btn btn-primary px-6 flex items-center gap-2">
+                <HiPlus className="text-lg" /> Add Product
+              </Link>
+            </div>
           </div>
         </div>
-      </section>
-
-      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        <StatCard icon={<HiOutlineCube />} title="Products" value={formatNumber(totals.totalProducts)} accent="teal" />
-        <StatCard icon={<HiOutlineCheckCircle />} title="Active" value={formatNumber(totals.totalActive)} accent="emerald" />
-        <StatCard icon={<HiOutlineXCircle />} title="Inactive" value={formatNumber(totals.totalInactive)} accent="slate" />
-        <StatCard icon={<HiOutlineExclamationCircle />} title="Out of Stock" value={formatNumber(totals.outOfStock)} accent="red" alert={totals.outOfStock > 0} />
-        <StatCard icon={<HiOutlineChartBar />} title="Stock Items" value={formatNumber(totals.totalStock)} accent="blue" />
-        <StatCard icon={<HiOutlineCurrencyDollar />} title="Value" value={formatCurrency(totals.totalInventoryValue)} accent="orange" />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <section className="panel p-6 lg:col-span-2">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="font-title text-2xl font-black text-slate-950">Category Distribution</h2>
-            <span className="badge badge-secondary">{categoryStats.length} categories</span>
-          </div>
+      <div className="mx-auto max-w-7xl px-4 -mt-6 relative z-10">
+        
+        {/* Stat Cards */}
+        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <StatCard icon={<HiOutlineCube />} title="Total Products" value={formatNumber(totals.totalProducts)} accent="orange" />
+          <StatCard icon={<HiOutlineCheckCircle />} title="Active" value={formatNumber(totals.totalActive)} accent="emerald" />
+          <StatCard icon={<HiOutlineXCircle />} title="Inactive" value={formatNumber(totals.totalInactive)} accent="zinc" />
+          <StatCard icon={<HiOutlineExclamationCircle />} title="Out of Stock" value={formatNumber(totals.outOfStock)} accent="red" alert={totals.outOfStock > 0} />
+          <StatCard icon={<HiOutlineChartBar />} title="Total Units" value={formatNumber(totals.totalStock)} accent="blue" />
+          <StatCard icon={<HiOutlineCurrencyDollar />} title="Inventory Value" value={formatCurrency(totals.totalInventoryValue)} accent="orange" />
+        </div>
 
-          {categoryStats.length === 0 ? (
-            <p className="font-medium text-slate-500">No categories found.</p>
-          ) : (
-            <div className="space-y-5">
-              {categoryStats.map((cat, index) => {
-                const percentage = totals.totalProducts ? (cat.count / totals.totalProducts) * 100 : 0;
-                return (
-                  <div key={cat._id || index}>
-                    <div className="mb-2 flex justify-between gap-4 text-sm">
-                      <span className="font-black text-slate-700">{cat._id}</span>
-                      <span className="font-bold text-slate-500">{cat.count} items ({percentage.toFixed(1)}%)</span>
-                    </div>
-                    <div className="h-3 overflow-hidden rounded-full bg-slate-100">
-                      <div className="h-full rounded-full bg-gradient-to-r from-teal-600 to-orange-400" style={{ width: `${percentage}%` }} />
-                    </div>
-                  </div>
-                );
-              })}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          
+          {/* Category Distribution */}
+          <section className="bg-[#0a0a0a] rounded-[32px] border border-white/5 shadow-xl shadow-black/50 p-6 md:p-8 lg:col-span-2">
+            <div className="mb-8 flex items-center justify-between border-b border-white/5 pb-4">
+              <h2 className="font-title text-2xl font-black text-white">Category Mix</h2>
+              <span className="rounded-full bg-white/10 text-zinc-300 px-3 py-1 text-xs font-bold uppercase tracking-wide">{categoryStats.length} Categories</span>
             </div>
-          )}
-        </section>
 
-        <section className="panel p-6">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="font-title text-2xl font-black text-slate-950">Recent Additions</h2>
-            <Link to="/admin/products" className="inline-flex items-center gap-1 text-sm font-black text-teal-700 hover:text-teal-900">
-              View All <HiArrowRight />
-            </Link>
-          </div>
-
-          <div className="space-y-3">
-            {recentProducts.length === 0 ? (
-              <p className="text-sm font-medium text-slate-500">No recent products.</p>
+            {categoryStats.length === 0 ? (
+              <div className="py-12 text-center text-zinc-500 font-medium">No category data available.</div>
             ) : (
-              recentProducts.map(product => (
-                <div key={product._id} className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-3 transition-colors hover:border-teal-200 hover:bg-teal-50/60">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 font-black text-white">
-                    {product.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h4 className="truncate text-sm font-black text-slate-950">{product.name}</h4>
-                    <p className="text-xs font-bold text-slate-500">{product.sku}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-black text-slate-950">{formatCurrency(product.price)}</div>
-                    <div className={product.status === 'active' ? 'text-xs font-bold text-emerald-600' : 'text-xs font-bold text-slate-400'}>
-                      {product.status}
+              <div className="space-y-6">
+                {categoryStats.map((cat, index) => {
+                  const percentage = totals.totalProducts ? (cat.count / totals.totalProducts) * 100 : 0;
+                  return (
+                    <div key={cat._id || index} className="group">
+                      <div className="mb-2 flex justify-between gap-4 text-sm">
+                        <span className="font-bold text-zinc-300">{cat._id}</span>
+                        <span className="font-bold text-zinc-500">{cat.count} items <span className="text-orange-500">({percentage.toFixed(1)}%)</span></span>
+                      </div>
+                      <div className="h-3.5 overflow-hidden rounded-full bg-black/50 shadow-inner">
+                        <div className="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-500 transition-all duration-1000 ease-out group-hover:from-orange-400 group-hover:to-amber-400" style={{ width: `${percentage}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
+          {/* Recent Products */}
+          <section className="bg-[#0a0a0a] rounded-[32px] border border-white/5 shadow-xl shadow-black/50 p-6 md:p-8">
+            <div className="mb-8 flex items-center justify-between border-b border-white/5 pb-4">
+              <h2 className="font-title text-2xl font-black text-white">Recent Additions</h2>
+              <Link to="/admin/products" className="inline-flex items-center gap-1 text-sm font-bold text-orange-500 hover:text-orange-400 transition-colors">
+                View All <HiArrowRight />
+              </Link>
+            </div>
+
+            <div className="space-y-4">
+              {recentProducts.length === 0 ? (
+                <div className="py-12 text-center text-zinc-500 font-medium">No recent products.</div>
+              ) : (
+                recentProducts.map(product => (
+                  <div key={product._id} className="flex items-center gap-4 rounded-2xl border border-white/5 bg-black p-3 transition-colors hover:border-orange-500/20 hover:bg-orange-500/5">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-orange-500/15 text-orange-500 font-black text-lg">
+                      {product.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="truncate text-sm font-bold text-white">{product.name}</h4>
+                      <p className="text-xs font-semibold text-zinc-500">{product.sku}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-black text-white">{formatCurrency(product.price)}</div>
+                      <div className={`mt-0.5 inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                        product.status === 'active' ? 'bg-emerald-500/15 text-emerald-400' :
+                        product.status === 'out_of_stock' ? 'bg-red-500/15 text-red-400' :
+                        'bg-zinc-500/15 text-zinc-300'
+                      }`}>
+                        {product.status.replace('_', ' ')}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
+                ))
+              )}
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   );
 };
 
 const accentClasses = {
-  teal: 'bg-teal-50 text-teal-700',
-  emerald: 'bg-emerald-50 text-emerald-700',
-  slate: 'bg-slate-100 text-slate-700',
-  red: 'bg-red-50 text-red-700',
-  blue: 'bg-blue-50 text-blue-700',
-  orange: 'bg-orange-50 text-orange-700',
+  orange: 'bg-orange-500/15 text-orange-500',
+  emerald: 'bg-emerald-500/15 text-emerald-400',
+  zinc: 'bg-zinc-500/15 text-zinc-400',
+  red: 'bg-red-500/15 text-red-400',
+  blue: 'bg-blue-500/15 text-blue-400',
 };
 
 const StatCard = ({ icon, title, value, accent, alert }) => (
-  <div className={`panel p-5 transition-transform hover:-translate-y-1 ${alert ? 'border-red-200' : ''}`}>
-    <div className={`mb-4 flex h-11 w-11 items-center justify-center rounded-2xl text-xl ${accentClasses[accent]}`}>
+  <div className={`bg-[#0a0a0a] rounded-[24px] border ${alert ? 'border-red-500/30 ring-2 ring-red-500/10' : 'border-white/5'} shadow-sm p-6 transition-all hover:-translate-y-1 hover:shadow-md`}>
+    <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-2xl text-2xl ${accentClasses[accent]}`}>
       {icon}
     </div>
-    <h3 className="text-sm font-bold text-slate-500">{title}</h3>
-    <div className="mt-1 font-title text-2xl font-black text-slate-950">{value}</div>
+    <h3 className="text-sm font-bold text-zinc-500 mb-1">{title}</h3>
+    <div className="font-title text-3xl font-black text-white">{value}</div>
   </div>
 );
 

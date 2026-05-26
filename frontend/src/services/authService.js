@@ -1,20 +1,17 @@
 /**
- * Mock Auth Service
- * Since the backend auth.middleware.js automatically mocks an admin user
- * in development mode, we don't need real JWT tokens for now.
- * This service just provides the expected interface for productService.
+ * Auth Service
+ * Reads the real JWT token from localStorage (set by authSlice on login).
+ * Provides the expected interface for productService interceptors.
  */
 const getCurrentUser = () => {
-  return {
-    name: 'Admin User',
-    email: 'admin@shopvault.com',
-    role: 'admin',
-    token: 'dev-admin-token'
-  };
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  return { token };
 };
 
 const authService = {
-  getCurrentUser
+  getCurrentUser,
 };
 
 export default authService;

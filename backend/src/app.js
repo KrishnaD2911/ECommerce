@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 // Route imports
 import productRoutes from './routes/product.routes.js';
 import authRoutes from './routes/auth.routes.js';
+import orderRoutes from './routes/order.routes.js';
 
 // Middleware imports
 import errorMiddleware from './middleware/error.middleware.js';
@@ -39,6 +40,7 @@ app.use('/uploads', express.static(uploadsPath));
 // API routes
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/orders', orderRoutes);
 
 // Health check
 app.get('/api/v1/health', (req, res) => {

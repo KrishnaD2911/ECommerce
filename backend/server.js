@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import app from './src/app.js';
 import connectDB from './src/config/db.js';
+import { initSocket } from './src/socket.js';
 
 // Load environment variables
 dotenv.config();
@@ -16,6 +17,8 @@ const startServer = async () => {
       console.log(`\nServer running in ${process.env.NODE_ENV} mode on port ${PORT}`);
       console.log(`API available at http://localhost:${PORT}/api/v1\n`);
     });
+
+    initSocket(server);
 
     server.on('error', (err) => {
       if (err.code === 'EADDRINUSE') {

@@ -15,19 +15,6 @@ export const protect = asyncHandler(async (req, res, next) => {
   }
 
   if (!token) {
-    if (process.env.NODE_ENV === 'development') {
-      let adminUser = await User.findOne({ role: 'admin' });
-      if (!adminUser) {
-        adminUser = await User.create({
-          name: 'Default Admin',
-          email: 'admin@shopvault.com',
-          password: 'adminpassword123',
-          role: 'admin',
-        });
-      }
-      req.user = adminUser;
-      return next();
-    }
     return next(new ErrorHandler('Not authorized. No token provided.', 401));
   }
 
@@ -44,19 +31,6 @@ export const protect = asyncHandler(async (req, res, next) => {
 
     next();
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      let adminUser = await User.findOne({ role: 'admin' });
-      if (!adminUser) {
-        adminUser = await User.create({
-          name: 'Default Admin',
-          email: 'admin@shopvault.com',
-          password: 'adminpassword123',
-          role: 'admin',
-        });
-      }
-      req.user = adminUser;
-      return next();
-    }
     return next(new ErrorHandler('Not authorized. Token is invalid.', 401));
   }
 });
