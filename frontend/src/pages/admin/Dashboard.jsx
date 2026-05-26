@@ -75,10 +75,10 @@ const Dashboard = () => {
             </div>
             
             <div className="flex flex-wrap gap-3">
-              <Link to="/admin/products" className="btn bg-[#0a0a0a] border border-white/10 text-zinc-300 hover:border-orange-500/30 hover:text-orange-500 shadow-sm px-6">
+              <Link to="/admin/products" className="btn bg-[#0a0a0a] border border-black/10 text-zinc-300 hover:border-orange-500/30 hover:text-orange-500 shadow-sm px-6">
                 Manage Inventory
               </Link>
-              <Link to="/admin/products/new" className="btn btn-primary px-6 flex items-center gap-2">
+              <Link to="/admin/products/new" className="btn btn-primary bg-orange-500 text-black hover:bg-orange-600 px-6 flex items-center gap-2">
                 <HiPlus className="text-lg" /> Add Product
               </Link>
             </div>
@@ -89,13 +89,13 @@ const Dashboard = () => {
       <div className="mx-auto max-w-7xl px-4 -mt-6 relative z-10">
         
         {/* Stat Cards */}
-        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          <StatCard icon={<HiOutlineCube />} title="Total Products" value={formatNumber(totals.totalProducts)} accent="orange" />
-          <StatCard icon={<HiOutlineCheckCircle />} title="Active" value={formatNumber(totals.totalActive)} accent="emerald" />
-          <StatCard icon={<HiOutlineXCircle />} title="Inactive" value={formatNumber(totals.totalInactive)} accent="zinc" />
-          <StatCard icon={<HiOutlineExclamationCircle />} title="Out of Stock" value={formatNumber(totals.outOfStock)} accent="red" alert={totals.outOfStock > 0} />
-          <StatCard icon={<HiOutlineChartBar />} title="Total Units" value={formatNumber(totals.totalStock)} accent="blue" />
-          <StatCard icon={<HiOutlineCurrencyDollar />} title="Inventory Value" value={formatCurrency(totals.totalInventoryValue)} accent="orange" />
+        <div className="mb-8 grid grid-cols-1 flex gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">  
+          <Link to="/admin/products"><StatCard icon={<HiOutlineCube />} title="Total Products" value={formatNumber(totals.totalProducts)} accent="orange" /></Link>
+          <Link to="/admin/products"><StatCard icon={<HiOutlineCheckCircle />} title="Active" value={formatNumber(totals.totalActive)} accent="emerald" /></Link>
+          <Link to="/admin/products"><StatCard icon={<HiOutlineXCircle />} title="Inactive" value={formatNumber(totals.totalInactive)} accent="zinc" /></Link>
+          <Link to="/admin/products"><StatCard icon={<HiOutlineExclamationCircle />} title="Out of Stock" value={formatNumber(totals.outOfStock)} accent="red" alert={totals.outOfStock > 0} /></Link>
+          <Link to="/admin/products"><StatCard icon={<HiOutlineChartBar />} title="Avg. Price" value={formatCurrency(totals.avgPrice)} accent="orange" /></Link>
+          <Link to="/admin/products"><StatCard icon={<HiOutlineCurrencyDollar />} title="Inventory Value" value={formatCurrency(totals.totalInventoryValue)} accent="blue" /></Link>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

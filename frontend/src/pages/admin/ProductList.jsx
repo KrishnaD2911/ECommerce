@@ -162,13 +162,13 @@ const ProductList = () => {
                   size="large"
                   sx={{
                     '& .MuiPaginationItem-root': {
-                      color: '#ff8800', // zinc-400
+                      color: '#ff8800', 
                       borderColor: 'rgb(217, 105, 0)',
                     },
                     '& .Mui-selected': {
-                      backgroundColor: 'rgba(249, 115, 22, 0.1) !important', // orange-500 with opacity
+                      backgroundColor: 'rgba(240, 109, 15, 0.94) !important', 
                       borderColor: 'rgba(255, 106, 0, 0.96)',
-                      color: '#f97316', // orange-500
+                      color: '#000000', 
                     },
                     '& .MuiPaginationItem-root:hover': {
                       backgroundColor: 'rgba(255, 106, 0, 0.05)',

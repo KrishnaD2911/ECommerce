@@ -97,7 +97,7 @@ const Products = () => {
               <span className="text-sm font-semibold text-zinc-300 pr-2.5">Just shipped v2.0</span>
             </div>
             
-            <h1 className="font-title text-5xl md:text-7xl font-black tracking-tight text-black leading-tight mb-6 drop-shadow-[0_0_10px_white]">
+            <h1 className=" relative font-title text-5xl md:text-7xl font-black tracking-tight text-black leading-tight mb-6 drop-shadow-[0_0_10px_white]">
               Curated gear for <br/> </h1>
               <h1 className="font-title text-5xl md:text-7xl font-black tracking-tight text-black leading-tight mb-6 drop-shadow-[0_0_10px_black]">
               <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent drop-shadow-[0_0_10px_black]">
@@ -243,13 +243,13 @@ const Products = () => {
                                   size="large"
                                   sx={{
                                     '& .MuiPaginationItem-root': {
-                                      color: '#ff8800', // zinc-400
+                                      color: '#ff8800', 
                                       borderColor: 'rgb(217, 105, 0)',
                                     },
                                     '& .Mui-selected': {
-                                      backgroundColor: 'rgba(249, 115, 22, 0.1) !important', // orange-500 with opacity
+                                      backgroundColor: 'rgba(240, 109, 15, 0.94) !important', 
                                       borderColor: 'rgba(255, 106, 0, 0.96)',
-                                      color: '#f97316', // orange-500
+                                      color: '#000000', 
                                     },
                                     '& .MuiPaginationItem-root:hover': {
                                       backgroundColor: 'rgba(255, 106, 0, 0.05)',

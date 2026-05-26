@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { addProduct, editProduct, fetchProduct, clearProduct, clearError } from '../../redux/productSlice';
-import { HiArrowLeft, HiSave, HiOutlineCube, HiOutlinePhotograph, HiX, HiCheck } from 'react-icons/hi';
+import { HiArrowLeft, HiSave, HiOutlineCube, HiOutlinePhotograph, HiX, HiCheck, HiOutlineCurrencyDollar, HiViewBoards } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 
 const CATEGORIES = [
@@ -276,7 +276,7 @@ const ProductForm = () => {
               <div className="form-group relative">
                 <label className="mb-2 block text-sm font-bold text-zinc-300">Price *</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold text-lg">$</span>
+                  <HiOutlineCurrencyDollar className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 text-xl pointer-events-none"/> 
                   <input 
                     type="number"
                     step="0.01"
@@ -284,8 +284,8 @@ const ProductForm = () => {
                     name="price"
                     value={formData.price}
                     onChange={handleChange}
-                    className={`form-control text-lg py-3 pl-10 rounded-xl bg-black focus:bg-[#0a0a0a] ${validationErrors.price ? 'border-red-500 ring-4 ring-red-500/10' : ''}`}
                     placeholder="0.00"
+                    className={`form-price text-lg py-3 rounded-xl bg-black pl-12 focus:bg-[#0a0a0a] ${validationErrors.price ? 'border-red-500 ring-4 ring-red-500/10' : ''}`}
                   />
                 </div>
                 {validationErrors.price && <p className="mt-2 text-sm font-bold text-red-500">{validationErrors.price}</p>}
@@ -294,15 +294,18 @@ const ProductForm = () => {
               {/* Stock */}
               <div className="form-group relative">
                 <label className="mb-2 block text-sm font-bold text-zinc-300">Stock Quantity *</label>
-                <input 
-                  type="number"
-                  min="0"
-                  name="stock"
-                  value={formData.stock}
-                  onChange={handleChange}
-                  className={`form-control text-lg py-3 rounded-xl bg-black focus:bg-[#0a0a0a] ${validationErrors.stock ? 'border-red-500 ring-4 ring-red-500/10' : ''}`}
-                  placeholder="0"
-                />
+                <div className="relative">
+                  <HiViewBoards className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 text-xl z-10 pointer-events-none"/> 
+                  <input 
+                    type="number"
+                    min="0"
+                    name="stock"
+                    value={formData.stock}
+                    onChange={handleChange}
+                    className={`form-price text-lg py-3 rounded-xl bg-black focus:bg-[#0a0a0a] ${validationErrors.stock ? 'border-red-500 ring-4 ring-red-500/10' : ''}`}
+                    placeholder="0"
+                  />
+                </div>
                 {validationErrors.stock && <p className="mt-2 text-sm font-bold text-red-500">{validationErrors.stock}</p>}
               </div>
 

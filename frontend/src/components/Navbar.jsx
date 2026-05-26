@@ -6,7 +6,10 @@ import {
   HiOutlineShoppingBag, 
   HiOutlineViewGrid, 
   HiOutlineShoppingCart,
-  HiOutlineLogout
+  HiOutlineLogout,
+  HiViewGrid,
+  HiShieldCheck,
+  HiOutlineShieldCheck
 } from 'react-icons/hi';
 
 const navLinkClass = ({ isActive }) =>
@@ -34,10 +37,12 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-1">
           <NavLink to="/" className={navLinkClass}>
+            <HiViewGrid className="text-lg" />
             Browse
           </NavLink>
           {user?.role === 'admin' && (
             <NavLink to="/admin" className={navLinkClass}>
+              <HiShieldCheck className="text-lg" />
               Admin
             </NavLink>
           )}
