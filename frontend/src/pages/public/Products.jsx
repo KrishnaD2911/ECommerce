@@ -92,10 +92,6 @@ const Products = () => {
 
         <div className="mx-auto max-w-7xl relative z-10 pointer-events-none mt-4">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto pointer-events-auto">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-1.5 py-1 shadow-sm backdrop-blur-sm">
-              <span className="bg-orange-500 text-black text-s font-black px-2.5 py-0.5 rounded-full">Shop</span>
-              <span className="font-semibold text-zinc-300 pr-2.5">Vault</span>
-            </div>
             
             <h1 className=" relative font-title text-5xl md:text-7xl font-black tracking-tight text-black leading-tight mb-6 drop-shadow-[0_0_10px_white]">
               Curated gear for <br/> </h1>
@@ -121,7 +117,7 @@ const Products = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <button className="h-10 px-5 rounded-full bg-white text-black font-bold text-sm transition-colors hover:bg-zinc-200 shadow-md shadow-white/10 shrink-0">
+                  <button className="h-10 px-5 rounded-full bg-gradient-to-r from-orange-400 to-amber-400 text-black font-bold text-sm transition-colors hover:bg-zinc-200 shadow-md shadow-white/10 shrink-0">
                     Search
                   </button>
                 </div>

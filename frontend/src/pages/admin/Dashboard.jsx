@@ -5,7 +5,7 @@ import { fetchAllOrders, updateOrderStatus } from '../../redux/orderSlice';
 import { Link } from 'react-router-dom';
 import {
   HiOutlineCube,
-  HiOutlineCurrencyDollar,
+  HiOutlineCurrencyRupee,
   HiOutlineExclamationCircle,
   HiOutlineChartBar,
   HiOutlineCheckCircle,
@@ -13,7 +13,8 @@ import {
   HiArrowRight,
   HiPlus,
   HiOutlineSparkles,
-  HiOutlineViewGrid
+  HiOutlineViewGrid,
+  HiGlobe
 } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 
@@ -80,7 +81,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <div className="mb-1 inline-flex items-center gap-1.5 rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-0.5 text-xs font-black text-orange-500 uppercase tracking-wide">
-                  <HiOutlineSparkles />
+                  <HiGlobe />
                   Admin Portal
                 </div>
                 <h1 className="font-title text-4xl md:text-5xl font-black text-white tracking-tight">Overview</h1>
@@ -88,7 +89,7 @@ const Dashboard = () => {
             </div>
             
             <div className="flex flex-wrap gap-3">
-              <Link to="/admin/products" className="btn bg-[#0a0a0a] border border-black/10 text-zinc-300 hover:border-orange-500/30 hover:text-orange-500 shadow-sm px-6">
+              <Link to="/admin/products" className="btn btn-secondary bg-[#0a0a0a] border border-black/10 text-zinc-300 hover:border-orange-500/30 hover:text-orange-500 shadow-sm px-6">
                 Manage Inventory
               </Link>
               <Link to="/admin/products/new" className="btn btn-primary bg-orange-500 text-black hover:bg-orange-600 px-6 flex items-center gap-2">
@@ -108,7 +109,7 @@ const Dashboard = () => {
           <Link to="/admin/products"><StatCard icon={<HiOutlineXCircle />} title="Inactive" value={formatNumber(totals.totalInactive)} accent="zinc" /></Link>
           <Link to="/admin/products"><StatCard icon={<HiOutlineExclamationCircle />} title="Out of Stock" value={formatNumber(totals.outOfStock)} accent="red" alert={totals.outOfStock > 0} /></Link>
           <Link to="/admin/products"><StatCard icon={<HiOutlineChartBar />} title="Avg. Price" value={formatCurrency(totals.avgPrice)} accent="orange" /></Link>
-          <Link to="/admin/products"><StatCard icon={<HiOutlineCurrencyDollar />} title="Inventory Value" value={formatCurrency(totals.totalInventoryValue)} accent="blue" /></Link>
+          <Link to="/admin/products"><StatCard icon={<HiOutlineCurrencyRupee />} title="Inventory Value" value={formatCurrency(totals.totalInventoryValue)} accent="blue" /></Link>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

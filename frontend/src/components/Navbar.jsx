@@ -9,7 +9,8 @@ import {
   HiOutlineLogout,
   HiViewGrid,
   HiShieldCheck,
-  HiOutlineShieldCheck
+  HiOutlineShieldCheck,
+  HiCollection
 } from 'react-icons/hi';
 
 const navLinkClass = ({ isActive }) =>
@@ -30,7 +31,7 @@ const Navbar = () => {
         
         <NavLink to="/" className="flex items-center gap-2.5 text-white">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-orange-500 text-black shadow-lg shadow-orange-500/20">
-            <HiOutlineCube className="text-lg" />
+            <HiCollection className="text-lg" />
           </span>
           <span className="font-title text-xl font-black tracking-tight">ShopVault</span>
         </NavLink>
