@@ -7,6 +7,8 @@ import { io } from 'socket.io-client';
 import FloatingLines from '../../components/Lines';
 import Pagination from '@mui/material/Pagination';
 
+const ENABLED_WAVES = ["top","middle","bottom"];
+
 const Products = () => {
   const dispatch = useDispatch();
   const { products, loading, error, page, pages, filters, totalProducts } = useSelector((state) => state.products);
@@ -27,21 +29,23 @@ const Products = () => {
     return () => clearTimeout(timer);
   }, [searchTerm, dispatch, filters.search]);
 
+  // Fetch products when page or filters change
   useEffect(() => {
     dispatch(fetchProducts());
+  }, [dispatch, page, filters]);
 
-    // Setup socket connection for real-time updates
-    const socket = io('http://localhost:5080'); // Replace with process.env.VITE_API_URL if needed
+  // Setup socket connection once on mount
+  useEffect(() => {
+    const socket = io('http://localhost:5080');
     
     socket.on('products_updated', () => {
-      // Re-fetch products quietly
       dispatch(fetchProducts());
     });
 
     return () => {
       socket.disconnect();
     };
-  }, [dispatch, page, filters]);
+  }, [dispatch]);
 
   const handleSortChange = (e) => {
     dispatch(setFilters({ sort: e.target.value }));
@@ -67,7 +71,7 @@ const Products = () => {
       <section className="relative overflow-hidden bg-black px-4 pt-32 pb-28">
         <div className="absolute inset-0 z-0">
           <FloatingLines
-            enabledWaves={["top","middle","bottom"]}
+            enabledWaves={ENABLED_WAVES}
             // Array - specify line count per wave; Number - same count for all waves
             lineCount={8}
             // Array - specify line distance per wave; Number - same distance for all waves

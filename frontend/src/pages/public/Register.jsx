@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { register, clearAuthError } from '../../redux/authSlice';
-import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser } from 'react-icons/hi';
+import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser, HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -14,6 +14,7 @@ const Register = () => {
     email: '',
     password: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     dispatch(clearAuthError());
@@ -79,7 +80,14 @@ const Register = () => {
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 text-lg pointer-events-none">
                 <HiOutlineLockClosed />
               </span>
-              <input type="password" name="password" required minLength="6" value={formData.password} onChange={handleChange} className="w-full rounded-xl border border-slate-700 bg-[#0f0a15] py-3 pl-14 pr-4 text-white outline-none focus:bg-[#1a1225]" placeholder="••••••••" />
+              <input type={showPassword ? "text" : "password"} name="password" required minLength="6" value={formData.password} onChange={handleChange} className="w-full rounded-xl border border-slate-700 bg-[#0f0a15] py-3 pl-14 pr-12 text-white outline-none focus:bg-[#1a1225]" placeholder="••••••••" />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 focus:outline-none"
+              >
+                {showPassword ? <HiOutlineEyeOff className="text-xl" /> : <HiOutlineEye className="text-xl" />}
+              </button>
             </div>
           </div>
 

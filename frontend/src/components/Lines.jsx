@@ -228,14 +228,19 @@ function hexToVec3(hex) {
   return new Vector3(r / 255, g / 255, b / 255);
 }
 
+const DEFAULT_ENABLED_WAVES = ['top', 'middle', 'bottom'];
+const DEFAULT_LINE_COUNT = [6];
+const DEFAULT_LINE_DISTANCE = [5];
+const DEFAULT_BOTTOM_WAVE = { x: 2.0, y: -0.7, rotate: -1 };
+
 export default function FloatingLines({
   linesGradient,
-  enabledWaves = ['top', 'middle', 'bottom'],
-  lineCount = [6],
-  lineDistance = [5],
+  enabledWaves = DEFAULT_ENABLED_WAVES,
+  lineCount = DEFAULT_LINE_COUNT,
+  lineDistance = DEFAULT_LINE_DISTANCE,
   topWavePosition,
   middleWavePosition,
-  bottomWavePosition = { x: 2.0, y: -0.7, rotate: -1 },
+  bottomWavePosition = DEFAULT_BOTTOM_WAVE,
   animationSpeed = 1,
   interactive = true,
   bendRadius = 5.0,
@@ -412,8 +417,8 @@ export default function FloatingLines({
     };
 
     if (interactive) {
-      renderer.domElement.addEventListener('pointermove', handlePointerMove);
-      renderer.domElement.addEventListener('pointerleave', handlePointerLeave);
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerleave', handlePointerLeave);
     }
 
     let raf = 0;
@@ -448,8 +453,8 @@ export default function FloatingLines({
       if (ro) ro.disconnect();
 
       if (interactive) {
-        renderer.domElement.removeEventListener('pointermove', handlePointerMove);
-        renderer.domElement.removeEventListener('pointerleave', handlePointerLeave);
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('pointerleave', handlePointerLeave);
       }
 
       geometry.dispose();
