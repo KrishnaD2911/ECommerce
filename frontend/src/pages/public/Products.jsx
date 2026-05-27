@@ -58,7 +58,6 @@ const Products = () => {
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pages) {
       dispatch(setPage(newPage));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -94,10 +93,10 @@ const Products = () => {
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto pointer-events-auto">
             
             <h1 className=" relative font-title text-5xl md:text-7xl font-black tracking-tight text-black leading-tight mb-6 drop-shadow-[0_0_10px_white]">
-              Curated gear for <br/> </h1>
+              Curated Gear for <br/> </h1>
               <h1 className="font-title text-5xl md:text-7xl font-black tracking-tight text-black leading-tight mb-6 drop-shadow-[0_0_10px_black]">
               <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent drop-shadow-[0_0_10px_black]">
-                modern lifestyles.
+                Modern Lifestyles.
               </span>
             </h1>
             

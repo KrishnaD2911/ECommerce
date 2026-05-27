@@ -32,7 +32,7 @@ const initialItems = storedCart ? JSON.parse(storedCart) : [];
 const calculateTotals = (items) => {
   const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
   const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const tax = subtotal * 0.08; // 8% tax
+  const tax = subtotal * 0.05; // 5% tax
   const totalPrice = subtotal + tax;
   return { totalQuantity, subtotal, tax, totalPrice };
 };

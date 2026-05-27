@@ -116,7 +116,7 @@ const Cart = () => {
                 <span className="font-bold text-white">{formatCurrency(subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Estimated Tax (8%):</span>
+                <span>Estimated Tax (5%):</span>
                 <span className="font-bold text-white">{formatCurrency(tax)}</span>
               </div>
             </div>

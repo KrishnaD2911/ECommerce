@@ -35,11 +35,6 @@ const startServer = async () => {
       server.close(() => process.exit(1));
     });
 
-    // Handle SIGTERM
-    process.on('SIGTERM', () => {
-      console.log('SIGTERM received. Shutting down gracefully...');
-      server.close(() => process.exit(0));
-    });
   } catch (error) {
     console.error(`Failed to start server: ${error.message}`);
     process.exit(1);
